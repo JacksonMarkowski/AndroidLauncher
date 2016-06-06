@@ -34,6 +34,5 @@ public class ApplicationsGridList extends GridLayout {
     public void setParams() {
         setColumnCount(4);
         setRowCount(5);
-        setBackgroundColor(Color.GREEN);
     }
 }
