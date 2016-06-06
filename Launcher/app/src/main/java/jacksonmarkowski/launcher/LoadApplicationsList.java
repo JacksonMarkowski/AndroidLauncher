@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -18,21 +19,38 @@ public class LoadApplicationsList {
     }
 
     public void loadApplications() {
-        addApplicationIcons(getPackageNames());
+        ApplicationsManager manager = new ApplicationsManager(activity);
+        manager.updateApplicationsInfo();
+        ArrayList<Application> apps = manager.getApplicationsInfo();
+        loadApplicationsIntoGrid(apps);
+        //addApplicationIcons(getPackageNames());
     }
 
-    private ArrayList<String> getPackageNames() {
-        ArrayList<String> packageNames = new ArrayList<String>();
-
+    private void loadApplicationsIntoGrid(ArrayList<Application> apps) {
         PackageManager pm = activity.getPackageManager();
-        List<ApplicationInfo> apps = pm.getInstalledApplications(0);
+        RelativeLayout container = (RelativeLayout) activity.findViewById(R.id.applicationsListContainer);
+
+        ArrayList<ApplicationsGridList> grids = new ArrayList<ApplicationsGridList>();
+        //ToDO: set for total number of pages
+        grids.add(new ApplicationsGridList(activity));
+
         for (int i=0; i < apps.size(); i++) {
-            String packageName = apps.get(i).packageName;
-            if (pm.getLaunchIntentForPackage(packageName) != null) {
-                packageNames.add(packageName);
+            Application app = apps.get(i);
+            try {
+                final String packageName = app.getName();
+                Drawable icon = pm.getApplicationIcon(packageName);
+                ApplicationIconButton button = new ApplicationIconButton(activity);
+                button.setImageDrawable(icon);
+                button.addClickListener(packageName);
+                grids.get(app.getListPage()).addView(button);
+            } catch(PackageManager.NameNotFoundException e) {
+                return;
             }
+
         }
-        return packageNames;
+        //ToDo: add all pages
+        container.addView(grids.get(0));
+
     }
 
     private void addApplicationIcons(ArrayList<String> packageNames) {
