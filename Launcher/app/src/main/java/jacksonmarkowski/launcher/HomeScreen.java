@@ -1,34 +1,31 @@
 package jacksonmarkowski.launcher;
 
 import android.app.Activity;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-
-import java.util.List;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 
 public class HomeScreen extends Activity {
+
+    private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
-        addToDb();
+
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPagerAdapter = new ApplicationsList(this.getApplicationContext());
+        mPager.setAdapter(mPagerAdapter);
     }
 
-    public void addToDb() {
-        //DbHandler db = new DbHandler(this);
-        //db.addApplication("TestApp");
-        //db.testInsert();
 
-        LoadApplicationsList loadApps = new LoadApplicationsList(this);
-        loadApps.loadApplications();
 
-    }
+//    public boolean onTouchEvent(MotionEvent touchevent) {
+//        Log.v("Hi", "working");
+//        return true;
+//    }
 }
+
+

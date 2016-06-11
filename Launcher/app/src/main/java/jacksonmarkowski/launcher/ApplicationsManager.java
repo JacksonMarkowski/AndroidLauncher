@@ -1,6 +1,7 @@
 package jacksonmarkowski.launcher;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -10,16 +11,16 @@ import java.util.List;
 
 public class ApplicationsManager {
 
-    Activity activity;
+    Context context;
 
-    public ApplicationsManager(Activity activity) {
-        this.activity = activity;
+    public ApplicationsManager(Context context) {
+        this.context = context;
     }
 
     private ArrayList<String> getPackageNames() {
         ArrayList<String> packageNames = new ArrayList<String>();
 
-        PackageManager pm = activity.getPackageManager();
+        PackageManager pm = context.getPackageManager();
         List<ApplicationInfo> apps = pm.getInstalledApplications(0);
         for (int i=0; i < apps.size(); i++) {
             String packageName = apps.get(i).packageName;
@@ -31,7 +32,7 @@ public class ApplicationsManager {
     }
 
     public void updateApplicationsInfo() {
-        DbHandler db = new DbHandler(activity);
+        DbHandler db = new DbHandler(context);
 
         ArrayList<String> applicationsOnSystem = getPackageNames();
         ArrayList<String> applicationsOnSystemUnaltered = new ArrayList<String>(applicationsOnSystem);
@@ -65,7 +66,7 @@ public class ApplicationsManager {
     }
 
     public ArrayList<Application> getApplicationsInfo() {
-        DbHandler db = new DbHandler(activity);
+        DbHandler db = new DbHandler(context);
         return db.getAllApplicationsInfo();
     }
 

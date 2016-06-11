@@ -1,64 +1,69 @@
 package jacksonmarkowski.launcher;
 
 import android.app.Activity;
-import android.content.pm.ApplicationInfo;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class LoadApplicationsList {
+public class ApplicationsListManager {
 
-    Activity activity;
+    Context context;
+    ArrayList<ApplicationsGridList> grids;
 
-    public LoadApplicationsList(Activity activity) {
-        this.activity = activity;
+    public ApplicationsListManager(Context context) {
+        this.context = context;
+        updateApplicationsList();
     }
 
-    public void loadApplications() {
-        ApplicationsManager manager = new ApplicationsManager(activity);
+    public void updateApplicationsList() {
+        ApplicationsManager manager = new ApplicationsManager(context);
         manager.updateApplicationsInfo();
         ArrayList<Application> apps = manager.getApplicationsInfo();
         loadApplicationsIntoGrid(apps);
-        //addApplicationIcons(getPackageNames());
+
+    }
+
+    public ApplicationsGridList getGridPage(int page) {
+        if (page < grids.size()) {
+            return grids.get(page);
+        } else {
+            return null;
+        }
     }
 
     private void loadApplicationsIntoGrid(ArrayList<Application> apps) {
-        PackageManager pm = activity.getPackageManager();
-        RelativeLayout container = (RelativeLayout) activity.findViewById(R.id.applicationsListContainer);
+        PackageManager pm = context.getPackageManager();
 
-        ArrayList<ApplicationsGridList> grids = new ArrayList<ApplicationsGridList>();
+        grids = new ArrayList<ApplicationsGridList>();
         //ToDo: set for total number of pages
-        grids.add(new ApplicationsGridList(activity));
+        grids.add(new ApplicationsGridList(context));
+        grids.add(new ApplicationsGridList(context));
 
         //ToDo: 4 and 5 should be replaced by size of grid list
-        int buttonSize = Math.min((activity.getResources().getDisplayMetrics().widthPixels) / 4, ((activity.getResources().getDisplayMetrics().heightPixels) / 5));
+        int buttonSize = Math.min((context.getResources().getDisplayMetrics().widthPixels) / 4, ((context.getResources().getDisplayMetrics().heightPixels) / 5));
         int iconSize = (int)(buttonSize / 1.666);
         int paddingSize = (buttonSize - iconSize)/2;
 
-        for (int i=0; i < apps.size() && i < 20; i++) {
+        for (int i=0; i < apps.size() && i < 40; i++) {
             Application app = apps.get(i);
             try {
                 final String packageName = app.getName();
                 Drawable icon = pm.getApplicationIcon(packageName);
                 Bitmap iconB = scaleIcon(icon, iconSize);
-                ApplicationIconButton button = new ApplicationIconButton(activity, paddingSize);
+                ApplicationIconButton button = new ApplicationIconButton(context, paddingSize);
                 button.setImageBitmap(iconB);
                 button.addClickListener(packageName);
                 grids.get(app.getListPage()).addView(button);
-            } catch(PackageManager.NameNotFoundException e) {
-                return;
+            } catch (PackageManager.NameNotFoundException e) {
+
             }
-
         }
-        //ToDo: add all pages
-        container.addView(grids.get(0));
-
     }
 
     private Bitmap scaleIcon(Drawable icon, int size) {
@@ -82,26 +87,5 @@ public class LoadApplicationsList {
             square = Bitmap.createBitmap(scaledIcon, 0, scaledIcon.getHeight()/2 - scaledIcon.getWidth()/2, scaledIcon.getWidth(), scaledIcon.getWidth());
         }
         return square;
-    }
-
-    private void addApplicationIcons(ArrayList<String> packageNames) {
-        PackageManager pm = activity.getPackageManager();
-        RelativeLayout container = (RelativeLayout) activity.findViewById(R.id.applicationsListContainer);
-        ApplicationsGridList grid = new ApplicationsGridList(activity);
-        container.addView(grid);
-
-        for (int i=0; i < packageNames.size() && i < 20; i++) {
-            try {
-                final String packageName = packageNames.get(i);
-                Drawable icon = pm.getApplicationIcon(packageName);
-                ApplicationIconButton button = new ApplicationIconButton(activity);
-                button.setImageDrawable(icon);
-                button.addClickListener(packageName);
-                grid.addView(button);
-            } catch(PackageManager.NameNotFoundException e) {
-                return;
-            }
-
-        }
     }
 }
