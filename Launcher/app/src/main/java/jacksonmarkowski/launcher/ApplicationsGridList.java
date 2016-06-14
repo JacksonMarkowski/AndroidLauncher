@@ -32,6 +32,7 @@ public class ApplicationsGridList extends GridLayout {
     }
 
     public void setParams() {
+        setPadding(10,0,10,0);
         setColumnCount(4);
         setRowCount(5);
     }

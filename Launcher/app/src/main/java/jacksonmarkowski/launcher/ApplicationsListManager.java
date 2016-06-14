@@ -6,27 +6,121 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class ApplicationsListManager {
 
-    Context context;
-    ArrayList<ApplicationsGridList> grids;
+    private Context context;
+    private ArrayList<ApplicationsGridList> grids;
+
+    private String saveFileName = "listInfo";
+
+    private int appsAcross;
+    private int appsDown;
+    private int pageCount;
 
     public ApplicationsListManager(Context context) {
         this.context = context;
-        updateApplicationsList();
     }
 
     public void updateApplicationsList() {
+        if (!fileExists(saveFileName)) {
+            generateBasicSaveFile();
+        }
+        parseSaveFile(readSaveFile());
+
         ApplicationsManager manager = new ApplicationsManager(context);
         manager.updateApplicationsInfo();
         ArrayList<Application> apps = manager.getApplicationsInfo();
         loadApplicationsIntoGrid(apps);
+    }
 
+    private boolean fileExists(String fileName) {
+        File file = context.getFileStreamPath(fileName);
+        return file.exists();
+    }
+
+    private void generateBasicSaveFile() {
+        writeToSaveFile("AppsAcross:4,AppsDown:5,PageCount:0,");
+    }
+
+    private void writeToSaveFile(String saveString) {
+        try {
+            FileOutputStream outputStream = context.openFileOutput(saveFileName, context.MODE_PRIVATE);
+            outputStream.write(saveString.getBytes());
+            outputStream.close();
+        }  catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readSaveFile() {
+        try {
+            InputStream inputStream = context.openFileInput(saveFileName);
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder stringBuilder = new StringBuilder();
+                String str;
+
+                while((str = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(str);
+                }
+
+                inputStream.close();
+                return stringBuilder.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private void parseSaveFile(String saveTxt) {
+        boolean foundElement = false;
+        int elementStart = 0;
+        int elementEnd = 0;
+        int dataStart = 0;
+        int dataEnd = 0;
+        for (int i = 0; i < saveTxt.length(); i++) {
+            if (!foundElement) {
+                if (saveTxt.substring(i, i+1).equals(":")) {
+                    elementEnd = i;
+                    dataStart = i+1;
+                    foundElement = true;
+                }
+            } else {
+                if (saveTxt.substring(i, i+1).equals(",")) {
+                    dataEnd = i;
+                    evaluateSaveFile(saveTxt.substring(elementStart, elementEnd), saveTxt.substring(dataStart, dataEnd));
+                    foundElement = false;
+                }
+            }
+        }
+    }
+
+    private void evaluateSaveFile(String element, String data) {
+        switch (element) {
+            case "AppsAcross": appsAcross = Integer.parseInt(data);
+            case "AppsDown": appsDown = Integer.parseInt(data);
+            case "PageCount": pageCount = Integer.parseInt(data);
+        }
+    }
+
+    public int getTotalPages() {
+        return pageCount;
     }
 
     public ApplicationsGridList getGridPage(int page) {
@@ -41,16 +135,15 @@ public class ApplicationsListManager {
         PackageManager pm = context.getPackageManager();
 
         grids = new ArrayList<ApplicationsGridList>();
-        //ToDo: set for total number of pages
-        grids.add(new ApplicationsGridList(context));
-        grids.add(new ApplicationsGridList(context));
+        for (int i = 0; i < pageCount; i++) {
+            grids.add(new ApplicationsGridList(context));
+        }
 
-        //ToDo: 4 and 5 should be replaced by size of grid list
-        int buttonSize = Math.min((context.getResources().getDisplayMetrics().widthPixels) / 4, ((context.getResources().getDisplayMetrics().heightPixels) / 5));
+        int buttonSize = Math.min((context.getResources().getDisplayMetrics().widthPixels) / appsAcross, ((context.getResources().getDisplayMetrics().heightPixels) / appsDown));
         int iconSize = (int)(buttonSize / 1.666);
         int paddingSize = (buttonSize - iconSize)/2;
 
-        for (int i=0; i < apps.size() && i < 40; i++) {
+        for (int i=0; i < apps.size(); i++) {
             Application app = apps.get(i);
             try {
                 final String packageName = app.getName();

@@ -12,21 +12,19 @@ public class ApplicationsList extends PagerAdapter {
 
     private Context context;
     private ApplicationsListManager listM;
-    private int pageCount = 0;
+    private int pageCount;
 
     public ApplicationsList(Context context) {
         this.context = context;
         listM = new ApplicationsListManager(context);
-        Log.v("Loading", "once");
+        listM.updateApplicationsList();
+        pageCount = listM.getTotalPages();
     }
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        //ViewGroup layout = (ViewGroup) inflater.inflate()
-        ViewGroup layout = listM.getGridPage(pageCount);
+        ViewGroup layout = listM.getGridPage(position);
         //Check if page is null
-        pageCount++;
         collection.addView(layout);
         return layout;
     }
@@ -36,9 +34,10 @@ public class ApplicationsList extends PagerAdapter {
         collection.removeView((View)view);
     }
 
+    //ToDo: pages of grids
     @Override
     public int getCount() {
-        return 2;
+        return pageCount;
     }
 
     @Override
