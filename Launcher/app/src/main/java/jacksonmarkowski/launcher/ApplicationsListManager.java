@@ -151,7 +151,8 @@ public class ApplicationsListManager {
                 Bitmap iconB = scaleIcon(icon, iconSize);
                 ApplicationIconButton button = new ApplicationIconButton(context, paddingSize);
                 button.setImageBitmap(iconB);
-                button.addClickListener(packageName);
+                //button.addClickListener(packageName);
+                button.addTouchListener(packageName);
                 grids.get(app.getListPage()).addView(button);
             } catch (PackageManager.NameNotFoundException e) {
 
