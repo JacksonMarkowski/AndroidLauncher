@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 public class ApplicationsList extends PagerAdapter {
 
@@ -19,6 +23,10 @@ public class ApplicationsList extends PagerAdapter {
         listM = new ApplicationsListManager(context);
         listM.updateApplicationsList();
         pageCount = listM.getTotalPages();
+    }
+
+    public int getPageCount() {
+        return pageCount;
     }
 
     @Override
@@ -34,7 +42,6 @@ public class ApplicationsList extends PagerAdapter {
         collection.removeView((View)view);
     }
 
-    //ToDo: pages of grids
     @Override
     public int getCount() {
         return pageCount;
