@@ -1,37 +1,24 @@
 package jacksonmarkowski.launcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ApplicationsList extends PagerAdapter {
+public class ApplicationsListAdapter extends PagerAdapter {
 
-    private Context context;
-    private ApplicationsListManager listM;
-    private int pageCount;
+    private ArrayList<ApplicationsGridList> pages;
 
-    public ApplicationsList(Context context) {
-        this.context = context;
-        listM = new ApplicationsListManager(context);
-        listM.updateApplicationsList();
-        pageCount = listM.getTotalPages();
-    }
-
-    public int getPageCount() {
-        return pageCount;
+    public ApplicationsListAdapter(ArrayList<ApplicationsGridList> pages) {
+        this.pages = pages;
     }
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-        ViewGroup layout = listM.getGridPage(position);
+        ViewGroup layout = pages.get(position);
         //Check if page is null
         collection.addView(layout);
         return layout;
@@ -44,7 +31,7 @@ public class ApplicationsList extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return pageCount;
+        return pages.size();
     }
 
     @Override

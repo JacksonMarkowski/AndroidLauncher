@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainLayout"
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewFlipper"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
+    <FrameLayout
+        android:id="@+id/listLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/listPageIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom|center_horizontal">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/listPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/listPageIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|center_horizontal"/>
 
+    </FrameLayout>
 
-</FrameLayout>
+    <View
+        android:id="@+id/MainPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"/>
+
+</ViewFlipper>
