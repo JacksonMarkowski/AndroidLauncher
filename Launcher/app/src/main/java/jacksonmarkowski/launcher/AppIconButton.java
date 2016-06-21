@@ -28,11 +28,11 @@ public class AppIconButton extends ImageButton {
     public AppIconButton(Activity activity) {
         super(activity);
         this.activity = activity;
+        setDefaultElements();
     }
 
-    public AppIconButton(Activity activity, AttributeSet attributeSet) {
-        super(activity, attributeSet);
-        this.activity = activity;
+    public void setDefaultElements() {
+        setBackgroundColor(0);
     }
 
     public void setApp(App app) {
@@ -41,10 +41,6 @@ public class AppIconButton extends ImageButton {
 
     public App getApp() {
         return app;
-    }
-
-    public void setDefaultElements() {
-        setBackgroundColor(0);
     }
 
     public void setPadding(int paddingSize) {
@@ -90,7 +86,6 @@ public class AppIconButton extends ImageButton {
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.v("Event", event.toString());
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_MOVE) {

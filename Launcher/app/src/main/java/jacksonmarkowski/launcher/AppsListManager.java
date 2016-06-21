@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -101,17 +102,18 @@ public class AppsListManager {
         }
 
         //ToDo: set size based on layout not screen
-        int buttonSize = Math.min((activity.getResources().getDisplayMetrics().widthPixels) / appsAcross, ((activity.getResources().getDisplayMetrics().heightPixels) / appsDown));
-        int iconSize = (int)(buttonSize / 1.666);
+        int buttonSize = Math.min((activity.getResources().getDisplayMetrics().widthPixels - 70) / appsAcross, ((activity.getResources().getDisplayMetrics().heightPixels) / appsDown));
+        int iconSize = (int)(buttonSize / 1.54);
         int paddingSize = (buttonSize - iconSize)/2;
 
         for (int i=0; i < apps.size(); i++) {
             App app = apps.get(i);
             try {
                 final String packageName = app.getName();
+                //ToDo: add label to icon
+                String label = (String) pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0));
                 Drawable icon = pm.getApplicationIcon(packageName);
                 AppIconButton button = new AppIconButton(activity);
-                button.setDefaultElements();
                 button.setPadding(paddingSize);
                 button.setApp(app);
                 button.setImageDrawableScaled(icon, iconSize);
