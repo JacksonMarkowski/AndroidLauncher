@@ -2,8 +2,6 @@ package jacksonmarkowski.launcher;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.widget.ImageView;
@@ -16,10 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class ApplicationsListManager {
+public class AppsListManager {
 
     private Activity activity;
-    private ArrayList<ApplicationsGridList> grids;
+    private ArrayList<AppsGridList> grids;
 
     private String saveFileName = "listInfo";
 
@@ -31,13 +29,13 @@ public class ApplicationsListManager {
 
     private ArrayList<ImageView> pageIcons = new ArrayList<ImageView>();
 
-    public ApplicationsListManager(Activity activity) {
+    public AppsListManager(Activity activity) {
         this.activity = activity;
     }
 
     public void addPagerAdapter() {
         pager = (ViewPager) activity.findViewById(R.id.listPager);
-        pager.setAdapter(new ApplicationsListAdapter(grids));
+        pager.setAdapter(new AppsListAdapter(grids));
     }
 
     public void addPageIndicator() {
@@ -61,9 +59,10 @@ public class ApplicationsListManager {
             pageIcons.add(pageIcon);
             layout.addView(pageIcons.get(i));
         }
-        pager.addOnPageChangeListener(new ApplicationsListChangeListener(pageIcons));
+        pager.addOnPageChangeListener(new AppsListChangeListener(pageIcons));
     }
 
+    //ToDo: pass in the updated apps list, dont create a applicationsmanager here
     public void updateApplicationsList() {
         if (!fileExists(saveFileName)) {
             generateBasicSaveFile();
@@ -71,9 +70,9 @@ public class ApplicationsListManager {
         //ToDo: reorder parse and evaluate save file
         parseSaveFile(readSaveFile());
 
-        ApplicationsManager manager = new ApplicationsManager(activity);
+        AppsManager manager = new AppsManager(activity);
         manager.updateApplicationsInfo();
-        ArrayList<Application> apps = manager.getApplicationsInfo();
+        ArrayList<App> apps = manager.getApplicationsInfo();
         loadApplicationsIntoGrid(apps);
     }
 
@@ -81,7 +80,7 @@ public class ApplicationsListManager {
         return pageCount;
     }
 
-    public ApplicationsGridList getPage(int page) {
+    public AppsGridList getPage(int page) {
         if (page < grids.size()) {
             return grids.get(page);
         } else {
@@ -89,59 +88,39 @@ public class ApplicationsListManager {
         }
     }
 
-    public ArrayList<ApplicationsGridList> getAllPages() {
+    public ArrayList<AppsGridList> getAllPages() {
         return grids;
     }
 
-    private void loadApplicationsIntoGrid(ArrayList<Application> apps) {
+    private void loadApplicationsIntoGrid(ArrayList<App> apps) {
         PackageManager pm = activity.getPackageManager();
 
-        grids = new ArrayList<ApplicationsGridList>();
+        grids = new ArrayList<AppsGridList>();
         for (int i = 0; i < pageCount; i++) {
-            grids.add(new ApplicationsGridList(activity));
+            grids.add(new AppsGridList(activity));
         }
 
+        //ToDo: set size based on layout not screen
         int buttonSize = Math.min((activity.getResources().getDisplayMetrics().widthPixels) / appsAcross, ((activity.getResources().getDisplayMetrics().heightPixels) / appsDown));
         int iconSize = (int)(buttonSize / 1.666);
         int paddingSize = (buttonSize - iconSize)/2;
 
         for (int i=0; i < apps.size(); i++) {
-            Application app = apps.get(i);
+            App app = apps.get(i);
             try {
                 final String packageName = app.getName();
                 Drawable icon = pm.getApplicationIcon(packageName);
-                Bitmap iconScaled = scaleIcon(icon, iconSize);
-                ApplicationIconButton button = new ApplicationIconButton(activity, paddingSize);
-                button.setImageBitmap(iconScaled);
-                button.addTouchListener(packageName);
+                AppIconButton button = new AppIconButton(activity);
+                button.setDefaultElements();
+                button.setPadding(paddingSize);
+                button.setApp(app);
+                button.setImageDrawableScaled(icon, iconSize);
+                button.addTouchListener();
                 grids.get(app.getListPage()).addView(button);
             } catch (PackageManager.NameNotFoundException e) {
 
             }
         }
-    }
-
-    private Bitmap scaleIcon(Drawable icon, int size) {
-        Bitmap iconB = ((BitmapDrawable)icon).getBitmap();
-
-        int originalIconWidth = iconB.getWidth();
-        int originalIconHeight = iconB.getHeight();
-        int newIconWidth;
-        int newIconHeight;
-        Bitmap square;
-
-        if (originalIconWidth > originalIconHeight) {
-            newIconHeight = size;
-            newIconWidth = (newIconHeight * originalIconWidth) / originalIconHeight;
-            Bitmap scaledIcon = Bitmap.createScaledBitmap(iconB, newIconWidth, newIconHeight, true);
-            square = Bitmap.createBitmap(scaledIcon, scaledIcon.getWidth()/2 - scaledIcon.getHeight()/2, 0, scaledIcon.getHeight(), scaledIcon.getHeight());
-        } else {
-            newIconWidth = size;
-            newIconHeight = (newIconWidth * originalIconHeight) / originalIconWidth;
-            Bitmap scaledIcon = Bitmap.createScaledBitmap(iconB, newIconWidth, newIconHeight, true);
-            square = Bitmap.createBitmap(scaledIcon, 0, scaledIcon.getHeight()/2 - scaledIcon.getWidth()/2, scaledIcon.getWidth(), scaledIcon.getWidth());
-        }
-        return square;
     }
 
 

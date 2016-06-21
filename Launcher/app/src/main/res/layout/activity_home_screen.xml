@@ -23,10 +23,11 @@
 
     </FrameLayout>
 
-    <View
-        android:id="@+id/MainPage"
+    <LinearLayout
+        android:id="@+id/MainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:background="@android:color/darker_gray"/>
 
 </ViewFlipper>

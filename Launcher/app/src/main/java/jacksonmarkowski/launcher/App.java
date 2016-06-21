@@ -1,6 +1,6 @@
 package jacksonmarkowski.launcher;
 
-public class Application {
+public class App {
 
     private String appName;
     private int appID;
@@ -9,9 +9,10 @@ public class Application {
     private int listYLoc;
 
 
-    public Application(String appName, int appID) {
+    public App(String appName, int appID) {
         this.appName = appName;
         this.appID = appID;
+
     }
 
     public void setListLoc(int xLoc, int yLoc, int page) {

@@ -1,25 +1,24 @@
 package jacksonmarkowski.launcher;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.GridLayout;
 
-public class ApplicationsGridList extends GridLayout {
+public class AppsGridList extends GridLayout {
 
     private int pageNumber;
 
-    public ApplicationsGridList(Context context) {
+    public AppsGridList(Context context) {
         super(context);
         setParams();
     }
 
-    public ApplicationsGridList(Context context, AttributeSet attributeSet) {
+    public AppsGridList(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         setParams();
     }
 
-    public void addApplication(Application app) {
+    public void addApplication(App app) {
 
     }
 

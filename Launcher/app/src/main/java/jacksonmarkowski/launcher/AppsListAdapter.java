@@ -1,18 +1,16 @@
 package jacksonmarkowski.launcher;
 
-import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ApplicationsListAdapter extends PagerAdapter {
+public class AppsListAdapter extends PagerAdapter {
 
-    private ArrayList<ApplicationsGridList> pages;
+    private ArrayList<AppsGridList> pages;
 
-    public ApplicationsListAdapter(ArrayList<ApplicationsGridList> pages) {
+    public AppsListAdapter(ArrayList<AppsGridList> pages) {
         this.pages = pages;
     }
 

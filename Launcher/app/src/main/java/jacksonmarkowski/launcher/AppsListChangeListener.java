@@ -5,12 +5,12 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-public class ApplicationsListChangeListener extends ViewPager.SimpleOnPageChangeListener {
+public class AppsListChangeListener extends ViewPager.SimpleOnPageChangeListener {
 
     private ArrayList<ImageView> pageIcons;
     private int previousPosition;
 
-    public ApplicationsListChangeListener(ArrayList<ImageView> pageIcons) {
+    public AppsListChangeListener(ArrayList<ImageView> pageIcons) {
         this.pageIcons = pageIcons;
     }
 

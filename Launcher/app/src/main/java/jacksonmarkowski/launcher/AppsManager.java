@@ -1,6 +1,5 @@
 package jacksonmarkowski.launcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -9,11 +8,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApplicationsManager {
+public class AppsManager {
 
     Context context;
 
-    public ApplicationsManager(Context context) {
+    public AppsManager(Context context) {
         this.context = context;
     }
 
@@ -65,7 +64,7 @@ public class ApplicationsManager {
         }
     }
 
-    public ArrayList<Application> getApplicationsInfo() {
+    public ArrayList<App> getApplicationsInfo() {
         DbHandler db = new DbHandler(context);
         return db.getAllApplicationsInfo();
     }

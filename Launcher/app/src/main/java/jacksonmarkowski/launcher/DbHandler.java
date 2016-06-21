@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DbHandler extends SQLiteOpenHelper {
@@ -118,15 +117,15 @@ public class DbHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Application> getAllApplicationsInfo() {
-        ArrayList<Application> apps = new ArrayList<Application>();
+    public ArrayList<App> getAllApplicationsInfo() {
+        ArrayList<App> apps = new ArrayList<App>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + TABLE_APPLICATIONS, null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String appName = cursor.getString(cursor.getColumnIndex(APPLICATION_NAME));
                 int appID = cursor.getInt(cursor.getColumnIndex(APPLICATION_ID));
-                Application app = new Application(appName, appID);
+                App app = new App(appName, appID);
 
                 Cursor cursor2 = db.rawQuery("select * from " + TABLE_APPLICATIONS_LIST + " WHERE " + APPLICATION_ID + " = '" + appID + "'", null);
                 if (cursor2.moveToFirst()) {
