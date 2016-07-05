@@ -1,12 +1,16 @@
 package jacksonmarkowski.launcher;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -102,7 +106,11 @@ public class AppsListManager {
         }
 
         //ToDo: set size based on layout not screen
-        int buttonSize = Math.min((activity.getResources().getDisplayMetrics().widthPixels - 70) / appsAcross, ((activity.getResources().getDisplayMetrics().heightPixels) / appsDown));
+        //ToDo: 70 and 180 need to be replaced
+        int buttonWidth = (activity.getResources().getDisplayMetrics().widthPixels - 100) / appsAcross;
+        Log.v("down", Integer.toString(appsDown));
+        int buttonHeight = (activity.getResources().getDisplayMetrics().heightPixels - 325) / appsDown;
+        int buttonSize = Math.min(buttonWidth, buttonHeight);
         int iconSize = (int)(buttonSize / 1.54);
         int paddingSize = (buttonSize - iconSize)/2;
 
@@ -110,15 +118,24 @@ public class AppsListManager {
             App app = apps.get(i);
             try {
                 final String packageName = app.getName();
-                //ToDo: add label to icon
+
                 String label = (String) pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0));
-                Drawable icon = pm.getApplicationIcon(packageName);
-                AppIconButton button = new AppIconButton(activity);
-                button.setPadding(paddingSize);
-                button.setApp(app);
-                button.setImageDrawableScaled(icon, iconSize);
-                button.addTouchListener();
-                grids.get(app.getListPage()).addView(button);
+                AppButtonText text = new AppButtonText(activity);
+                text.setText(label);
+
+                Drawable iconDrawable = pm.getApplicationIcon(packageName);
+                AppButtonIcon icon = new AppButtonIcon(activity);
+                icon.setPadding(paddingSize);
+                icon.setImageDrawableScaled(iconDrawable, iconSize);
+
+                AppButtonContainer container = new AppButtonContainer(activity);
+                container.setDefaultParams(buttonWidth, buttonHeight);
+                container.setApp(app);
+                container.addListTouchListener();
+                container.setIcon(icon);
+                container.setText(text);
+
+                grids.get(app.getListPage()).addView(container);
             } catch (PackageManager.NameNotFoundException e) {
 
             }
@@ -185,6 +202,7 @@ public class AppsListManager {
                 if (saveTxt.substring(i, i+1).equals(",")) {
                     dataEnd = i;
                     evaluateSaveFile(saveTxt.substring(elementStart, elementEnd), saveTxt.substring(dataStart, dataEnd));
+                    elementStart = i+1;
                     foundElement = false;
                 }
             }

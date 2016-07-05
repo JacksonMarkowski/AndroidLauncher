@@ -1,11 +1,9 @@
 package jacksonmarkowski.launcher;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 public class MainLayoutDragListener implements View.OnDragListener {
 
@@ -21,21 +19,31 @@ public class MainLayoutDragListener implements View.OnDragListener {
             case DragEvent.ACTION_DRAG_STARTED:
                 break;
             case DragEvent.ACTION_DROP:
-                AppIconButton icon = (AppIconButton) event.getLocalState();
-                int width = icon.getWidth();
-                int height = icon.getHeight();
+                AppButtonContainer container = (AppButtonContainer) event.getLocalState();
+                AppButtonIcon icon = container.getIcon();
+                AppButtonText text = container.getText();
 
-                AppIconButton iconDuplicate = new AppIconButton(activity);
-                iconDuplicate.setApp(icon.getApp());
-                iconDuplicate.setImageDrawable(icon.getDrawable());
+                AppButtonIcon iconDuplicate = new AppButtonIcon(activity);
                 iconDuplicate.setPadding(icon.getPadding());
-                iconDuplicate.addTouchListener();
+                iconDuplicate.setImageDrawable(icon.getDrawable());
+
+                AppButtonText textDuplicate = new AppButtonText(activity);
+                textDuplicate.setText(text.getText());
+
+                int width = container.getWidth();
+                int height = container.getHeight();
+                AppButtonContainer containerDuplicate = new AppButtonContainer(activity);
+                containerDuplicate.setDefaultParams(width, height);
+                containerDuplicate.setApp(container.getApp());
+                containerDuplicate.setIcon(iconDuplicate);
+                containerDuplicate.setText(textDuplicate);
+                containerDuplicate.addListTouchListener();
 
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, height);
                 params.leftMargin = (int)event.getX() - (width/2);
                 params.topMargin = (int)event.getY() - (height/2);
-                FrameLayout container = (FrameLayout) v;
-                container.addView(iconDuplicate, params);
+                FrameLayout mainLayout = (FrameLayout) v;
+                mainLayout.addView(containerDuplicate, params);
                 break;
 
             default:
