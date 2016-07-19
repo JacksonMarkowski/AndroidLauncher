@@ -25,6 +25,7 @@ public class AppButtonContainer extends LinearLayout {
     private int height;
 
     private boolean beingMoved = false;
+    private boolean containerInMain;
 
     public AppButtonContainer(Activity activity) {
         super(activity);
@@ -68,6 +69,14 @@ public class AppButtonContainer extends LinearLayout {
         return text;
     }
 
+    public void setContainerInMain(Boolean containerInMain) {
+        this.containerInMain = containerInMain;
+    }
+
+    public boolean getContainerInMain() {
+        return containerInMain;
+    }
+
     public void addListTouchListener() {
         final String packageName = app.getName();
         //ToDo: Make listener its own file
@@ -84,7 +93,6 @@ public class AppButtonContainer extends LinearLayout {
                             ClipData data = ClipData.newPlainText("", "");
                             DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
                             v.startDrag(data, shadowBuilder, v, 0);
-                            //v.setVisibility(View.INVISIBLE);
 
                             ViewFlipper flipper = (ViewFlipper) activity.findViewById(R.id.viewFlipper);
                             flipper.setInAnimation(activity, R.anim.in_from_bottom);
@@ -97,7 +105,52 @@ public class AppButtonContainer extends LinearLayout {
                         return false;
                     case MotionEvent.ACTION_CANCEL:
                         beingMoved = false;
+                        return false;
+                    case MotionEvent.ACTION_UP:
+                        if (beingMoved) {
+                            beingMoved = false;
+                            return true;
+                        } else {
+                            if (withinButton(event.getX(), event.getY())) {
+                                Context context = getContext();
+                                Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+                                context.startActivity(launchIntent);
+                                return true;
+                            }
+                            return false;
+                        }
+                    default:
+                        return false;
+                }
+            }
+        });
+    }
+
+    public void addMainTouchListener() {
+        final String packageName = app.getName();
+        //ToDo: Make listener its own file
+        //ToDo: check return types are correct
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
                         return true;
+                    case MotionEvent.ACTION_MOVE:
+                        long timeHeld = event.getEventTime() - event.getDownTime();
+                        if (!beingMoved && timeHeld > 1200 && withinButton(event.getX(), event.getY())) {
+                            ClipData data = ClipData.newPlainText("", "");
+                            DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                            v.startDrag(data, shadowBuilder, v, 0);
+                            v.setVisibility(View.INVISIBLE);
+
+                            beingMoved = true;
+                            return true;
+                        }
+                        return false;
+                    case MotionEvent.ACTION_CANCEL:
+                        beingMoved = false;
+                        return false;
                     case MotionEvent.ACTION_UP:
                         if (beingMoved) {
                             beingMoved = false;

@@ -5,6 +5,37 @@
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/MainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/mainPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <LinearLayout
+            android:id="@+id/mainBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom|center_horizontal">
+
+            <ImageButton
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:onClick="appsListButtonClick"
+                android:src="@drawable/apps_list_icon"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:background="@null"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/listLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,15 +48,11 @@
         <LinearLayout
             android:id="@+id/listPageIndicator"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:orientation="horizontal"
             android:layout_gravity="bottom|center_horizontal"/>
 
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/MainLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </ViewFlipper>

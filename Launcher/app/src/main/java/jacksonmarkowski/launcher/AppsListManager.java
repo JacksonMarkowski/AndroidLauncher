@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -134,6 +135,7 @@ public class AppsListManager {
                 container.addListTouchListener();
                 container.setIcon(icon);
                 container.setText(text);
+                container.setContainerInMain(false);
 
                 grids.get(app.getListPage()).addView(container);
             } catch (PackageManager.NameNotFoundException e) {
