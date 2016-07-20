@@ -12,6 +12,9 @@ public class HomeScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
+        Preferences prefs = new Preferences(this);
+        //ToDo: prefs.generateDefaultAppSize();
+
         AppsListManager list = new AppsListManager(this);
         list.updateApplicationsList();
         list.addPagerAdapter();

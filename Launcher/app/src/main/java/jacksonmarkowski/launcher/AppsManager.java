@@ -30,6 +30,7 @@ public class AppsManager {
         return packageNames;
     }
 
+    //ToDo: update pages in saved preferences
     public void updateApplicationsInfo() {
         DbHandler db = new DbHandler(context);
 
