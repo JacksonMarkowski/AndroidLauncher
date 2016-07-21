@@ -3,10 +3,13 @@ package jacksonmarkowski.launcher;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class Preferences {
 
     private Activity activity;
+
+    private static final String firstRun = "FirstRun";
 
     private static final String listAppsAcross = "ListAppsAcross";
     private static final String listAppsDown = "ListAppsDown";
@@ -19,6 +22,17 @@ public class Preferences {
 
     public Preferences(Activity activity) {
         this.activity = activity;
+
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean(firstRun, true)) {
+            Log.v("first", "run");
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(firstRun, false);
+            editor.apply();
+            generateDefaultAppSize();
+        }
+
+
     }
 
     private void createDefaultPreference() {
@@ -58,7 +72,7 @@ public class Preferences {
 
     public int getListPages() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int pages = sharedPref.getInt(listPages, 0);
+        int pages = sharedPref.getInt(listPages, 1);
         return pages;
     }
 
