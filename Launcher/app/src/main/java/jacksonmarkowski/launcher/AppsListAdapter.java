@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class AppsListAdapter extends PagerAdapter {
 
-    private ArrayList<AppsGridList> pages;
+    private ArrayList<AppsListGrid> pages;
 
-    public AppsListAdapter(ArrayList<AppsGridList> pages) {
+    public AppsListAdapter(ArrayList<AppsListGrid> pages) {
         this.pages = pages;
     }
 

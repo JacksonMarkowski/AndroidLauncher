@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 public class AppsListManager {
 
     private Activity activity;
-    private ArrayList<AppsGridList> grids;
+    private ArrayList<AppsListGrid> grids;
 
     private ViewPager pager;
 
@@ -30,8 +32,13 @@ public class AppsListManager {
     public void addPageIndicator() {
         LinearLayout layout = (LinearLayout) activity.findViewById(R.id.listPageIndicator);
 
-        //ToDo: set the size of dots based on screen size
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(50,50);
+        Preferences prefs = new Preferences(activity);
+        int size = prefs.getListPageIndicatorSize();
+        int margin = prefs.getListPageIndicatorMargin();
+        int padding = prefs.getListPageIndicatorPadding();
+        Log.v("Size3", Integer.toString(size));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
+        params.setMargins(margin, 0, margin, 0);
 
         //Adds page icon for the first page that will be currently selected
         ImageView pageIcon = new ImageView(activity);
@@ -41,15 +48,15 @@ public class AppsListManager {
         layout.addView(pageIcons.get(0));
 
         //Adds page icon for the remaining pages that are not currently selected;
-        Preferences prefs = new Preferences(activity);
-        for (int i = 1; i < prefs.getListPages(); i++) {
+        for (int i = 1; i < 4; i++) {
             pageIcon = new ImageView(activity);
             pageIcon.setImageResource(R.drawable.list_page_notselected_icon);
             pageIcon.setLayoutParams(params);
+            pageIcon.setPadding(padding, padding, padding, padding);
             pageIcons.add(pageIcon);
             layout.addView(pageIcons.get(i));
         }
-        pager.addOnPageChangeListener(new AppsListChangeListener(pageIcons));
+        pager.addOnPageChangeListener(new AppsListChangeListener(pageIcons, padding));
     }
 
     //ToDo: pass in the updated apps list, dont create a applicationsmanager here
@@ -64,9 +71,9 @@ public class AppsListManager {
     private void loadApplicationsIntoGrid(ArrayList<App> apps) {
         Preferences prefs = new Preferences(activity);
 
-        grids = new ArrayList<AppsGridList>();
-        for (int i = 0; i < prefs.getListPages(); i++) {
-            grids.add(new AppsGridList(activity));
+        grids = new ArrayList<AppsListGrid>();
+        for (int i = 0; i < 4; i++) {
+            grids.add(new AppsListGrid(activity));
         }
 
         PackageManager pm = activity.getPackageManager();

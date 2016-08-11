@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.TypedValue;
 
 public class Preferences {
 
@@ -14,6 +15,9 @@ public class Preferences {
     private static final String listAppsAcross = "ListAppsAcross";
     private static final String listAppsDown = "ListAppsDown";
     private static final String listPages = "ListPages";
+    private static final String listPageIndicatorSize = "ListPageIndicatorSize";
+    private static final String listPageIndicatorMargin = "ListPageIndicatorMargin";
+    private static final String listPageIndicatorPadding = "ListPageIndicatorPadding";
 
     private static final String defaultAppWidth = "DefaultAppWidth";
     private static final String defaultAppHeight = "DefaultAppHeight";
@@ -29,6 +33,7 @@ public class Preferences {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean(firstRun, false);
             editor.apply();
+            generateDefaultListSizes();
             generateDefaultAppSize();
         }
 
@@ -93,6 +98,24 @@ public class Preferences {
         setListPages(currentCount - 1);
     }
 
+    public int getListPageIndicatorSize() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int size = sharedPref.getInt(listPageIndicatorSize, 0);
+        return size;
+    }
+
+    public int getListPageIndicatorMargin() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int margin = sharedPref.getInt(listPageIndicatorMargin, 0);
+        return margin;
+    }
+
+    public int getListPageIndicatorPadding() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int padding = sharedPref.getInt(listPageIndicatorPadding, 0);
+        return padding;
+    }
+
     public int getDefaultAppWidth() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         int width = sharedPref.getInt(defaultAppWidth, 250);
@@ -115,6 +138,18 @@ public class Preferences {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         int padding = sharedPref.getInt(defaultPaddingSize, 0);
         return padding;
+    }
+
+    public void generateDefaultListSizes() {
+        int iconSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, activity.getResources().getDisplayMetrics());
+        int marginSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, activity.getResources().getDisplayMetrics()) - iconSize;
+
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(listPageIndicatorSize, iconSize);
+        editor.putInt(listPageIndicatorMargin, marginSize);
+        editor.putInt(listPageIndicatorPadding, 9);
+        editor.apply();
     }
 
     public void generateDefaultAppSize() {

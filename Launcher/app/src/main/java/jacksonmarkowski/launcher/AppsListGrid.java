@@ -4,16 +4,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.GridLayout;
 
-public class AppsGridList extends GridLayout {
+public class AppsListGrid extends GridLayout {
 
     private int pageNumber;
 
-    public AppsGridList(Context context) {
+    public AppsListGrid(Context context) {
         super(context);
         setParams();
     }
 
-    public AppsGridList(Context context, AttributeSet attributeSet) {
+    public AppsListGrid(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         setParams();
     }
@@ -31,7 +31,7 @@ public class AppsGridList extends GridLayout {
     }
 
     public void setParams() {
-        setPadding(50,50,50,0);
+        setPadding(50,0,50,0);
         setColumnCount(4);
         setRowCount(5);
     }
