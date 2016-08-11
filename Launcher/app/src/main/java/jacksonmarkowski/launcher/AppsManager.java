@@ -1,5 +1,6 @@
 package jacksonmarkowski.launcher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -10,16 +11,16 @@ import java.util.List;
 
 public class AppsManager {
 
-    Context context;
+    Activity activity;
 
-    public AppsManager(Context context) {
-        this.context = context;
+    public AppsManager(Activity activity) {
+        this.activity = activity;
     }
 
     private ArrayList<String> getPackageNames() {
         ArrayList<String> packageNames = new ArrayList<String>();
 
-        PackageManager pm = context.getPackageManager();
+        PackageManager pm = activity.getPackageManager();
         List<ApplicationInfo> apps = pm.getInstalledApplications(0);
         for (int i=0; i < apps.size(); i++) {
             String packageName = apps.get(i).packageName;
@@ -32,7 +33,7 @@ public class AppsManager {
 
     //ToDo: update pages in saved preferences
     public void updateApplicationsInfo() {
-        DbHandler db = new DbHandler(context);
+        DbHandler db = new DbHandler(activity);
 
         ArrayList<String> applicationsOnSystem = getPackageNames();
         ArrayList<String> applicationsOnSystemUnaltered = new ArrayList<String>(applicationsOnSystem);
@@ -47,7 +48,7 @@ public class AppsManager {
             int appID = db.addApplication(appName);
 
             //Adds app to app list table
-            db.addApplicationToList(appID, i/20, i%4, i%5);
+            db.addApplicationToList(appID);
 
             Log.v("Add", appName + " " + appID);
         }
@@ -66,7 +67,7 @@ public class AppsManager {
     }
 
     public ArrayList<App> getApplicationsInfo() {
-        DbHandler db = new DbHandler(context);
+        DbHandler db = new DbHandler(activity);
         return db.getAllApplicationsInfo();
     }
 

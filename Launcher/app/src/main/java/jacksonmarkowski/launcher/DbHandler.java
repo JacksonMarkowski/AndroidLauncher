@@ -1,5 +1,6 @@
 package jacksonmarkowski.launcher;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 public class DbHandler extends SQLiteOpenHelper {
 
+    private Activity activity;
     private static final String DATABASE_NAME = "homescreen";
     private static final int DATABASE_VERSION = 1;
 
@@ -26,8 +28,16 @@ public class DbHandler extends SQLiteOpenHelper {
     private static final String YLOC = "yloc";
     private static final String SQL_CREATE_APPLICATIONS_LIST = "CREATE TABLE " + TABLE_APPLICATIONS_LIST + " (" + APPLICATIONS_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + APPLICATION_ID + " INTEGER, " + PAGE + " INTEGER, " + XLOC + " INTEGER, " + YLOC + " INTEGER)";
 
-    public DbHandler(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public DbHandler(Activity activity) {
+        super(activity, DATABASE_NAME, null, DATABASE_VERSION);
+        this.activity = activity;
+    }
+
+    //ToDo: possibly make this its own class
+    private class AppPos{
+        public int page;
+        public int yLoc;
+        public int xLoc;
     }
 
     @Override
@@ -97,17 +107,62 @@ public class DbHandler extends SQLiteOpenHelper {
 
 
 
-    public void addApplicationToList(int appID, int page, int xLoc, int yLoc) {
+    public void addApplicationToList(int appID) {
+        AppPos pos = generateAppPosition();
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(APPLICATION_ID, appID);
-        values.put(PAGE, page);
-        values.put(XLOC, xLoc);
-        values.put(YLOC, yLoc);
+        values.put(PAGE, pos.page);
+        values.put(XLOC, pos.xLoc);
+        values.put(YLOC, pos.yLoc);
 
         db.insert(TABLE_APPLICATIONS_LIST, null, values);
         db.close();
+    }
+
+    public AppPos generateAppPosition() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        AppPos pos = new AppPos();
+
+        Cursor cursor = db.rawQuery("select max(" + PAGE + ") from " + TABLE_APPLICATIONS_LIST, null);
+        if (cursor.moveToFirst()) {
+            int maxPage = cursor.getInt(0);
+            cursor = db.rawQuery("select max(" + YLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage), null);
+            cursor.moveToFirst();
+            int maxY = cursor.getInt(0);
+            cursor = db.rawQuery("select max(" + XLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage) + " and " + YLOC + " = " + Integer.toString(maxY), null);
+            cursor.moveToFirst();
+            int maxX = cursor.getInt(0);
+
+            Preferences prefs = new Preferences(activity);
+            int across = prefs.getAppsAcross();
+            int down = prefs.getAppsDown();
+            if (maxY >= down - 1 && maxX >= across - 1) {
+                pos.page = (maxPage + 1);
+                pos.xLoc = 0;
+                pos.yLoc = 0;
+            } else if (maxX >= across - 1) {
+                pos.page = maxPage;
+                pos.xLoc = 0;
+                pos.yLoc = (maxY + 1);
+            } else if (maxX == 0 && maxY == 0 && maxPage == 0) {
+                pos.page = 0;
+                pos.xLoc = 0;
+                pos.yLoc = 0;
+            } else {
+                pos.page = maxPage;
+                pos.xLoc = (maxX + 1);
+                pos.yLoc = maxY;
+            }
+        } else {
+            pos.page = 0;
+            pos.yLoc = 0;
+            pos.xLoc = 0;
+        }
+        db.close();
+        return pos;
     }
 
     public void removeApplicationFromList(int appID) {
@@ -141,17 +196,5 @@ public class DbHandler extends SQLiteOpenHelper {
         db.close();
         return apps;
     }
-
-
-
-    public void testInsert() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_APPLICATIONS, null);
-        cursor.moveToFirst();
-        Log.v("Test", cursor.getString(cursor.getColumnIndex(APPLICATION_NAME)));
-
-    }
-
-
 
 }
