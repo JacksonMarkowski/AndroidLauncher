@@ -31,7 +31,6 @@ public class AppsManager {
         return packageNames;
     }
 
-    //ToDo: update pages in saved preferences
     public void updateApplicationsInfo() {
         DbHandler db = new DbHandler(activity);
 
@@ -49,8 +48,6 @@ public class AppsManager {
 
             //Adds app to app list table
             db.addApplicationToList(appID);
-
-            Log.v("Add", appName + " " + appID);
         }
 
         //Removes apps in the database but no longer installed on the system

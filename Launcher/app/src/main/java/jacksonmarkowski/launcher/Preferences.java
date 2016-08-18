@@ -15,6 +15,8 @@ public class Preferences {
     private static final String listAppsAcross = "ListAppsAcross";
     private static final String listAppsDown = "ListAppsDown";
     private static final String listPages = "ListPages";
+    private static final String listWidth = "ListWidth";
+    private static final String listHeight = "ListHeight";
     private static final String listPageIndicatorSize = "ListPageIndicatorSize";
     private static final String listPageIndicatorMargin = "ListPageIndicatorMargin";
     private static final String listPageIndicatorPadding = "ListPageIndicatorPadding";
@@ -29,7 +31,6 @@ public class Preferences {
 
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean(firstRun, true)) {
-            Log.v("first", "run");
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean(firstRun, false);
             editor.apply();
@@ -98,6 +99,20 @@ public class Preferences {
         setListPages(currentCount - 1);
     }
 
+
+    //ToDo: update these and use them for list sizing
+    public int getListWidth() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int width = sharedPref.getInt(listWidth, 0);
+        return width;
+    }
+
+    public int getListHeight() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        int height = sharedPref.getInt(listHeight, 0);
+        return height;
+    }
+
     public int getListPageIndicatorSize() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         int size = sharedPref.getInt(listPageIndicatorSize, 0);
@@ -141,14 +156,14 @@ public class Preferences {
     }
 
     public void generateDefaultListSizes() {
-        int iconSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, activity.getResources().getDisplayMetrics());
+        int iconSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, activity.getResources().getDisplayMetrics());
         int marginSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, activity.getResources().getDisplayMetrics()) - iconSize;
 
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(listPageIndicatorSize, iconSize);
         editor.putInt(listPageIndicatorMargin, marginSize);
-        editor.putInt(listPageIndicatorPadding, 9);
+        editor.putInt(listPageIndicatorPadding, 6);
         editor.apply();
     }
 

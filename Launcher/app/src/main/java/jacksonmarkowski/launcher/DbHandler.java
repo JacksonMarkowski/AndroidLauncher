@@ -126,45 +126,46 @@ public class DbHandler extends SQLiteOpenHelper {
 
         AppPos pos = new AppPos();
 
-        Cursor cursor = db.rawQuery("select max(" + PAGE + ") from " + TABLE_APPLICATIONS_LIST, null);
-        if (cursor.moveToFirst()) {
-            int maxPage = cursor.getInt(0);
-            cursor = db.rawQuery("select max(" + YLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage), null);
-            cursor.moveToFirst();
-            int maxY = cursor.getInt(0);
-            cursor = db.rawQuery("select max(" + XLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage) + " and " + YLOC + " = " + Integer.toString(maxY), null);
-            cursor.moveToFirst();
-            int maxX = cursor.getInt(0);
-
-            Preferences prefs = new Preferences(activity);
-            int across = prefs.getAppsAcross();
-            int down = prefs.getAppsDown();
-            if (maxY >= down - 1 && maxX >= across - 1) {
-                pos.page = (maxPage + 1);
-                pos.xLoc = 0;
-                pos.yLoc = 0;
-            } else if (maxX >= across - 1) {
-                pos.page = maxPage;
-                pos.xLoc = 0;
-                pos.yLoc = (maxY + 1);
-            } else if (maxX == 0 && maxY == 0 && maxPage == 0) {
-                pos.page = 0;
-                pos.xLoc = 0;
-                pos.yLoc = 0;
-            } else {
-                pos.page = maxPage;
-                pos.xLoc = (maxX + 1);
-                pos.yLoc = maxY;
-            }
-        } else {
-            pos.page = 0;
-            pos.yLoc = 0;
+        Cursor cursor = db.rawQuery("select * from " + TABLE_APPLICATIONS_LIST, null);
+        if (!cursor.moveToFirst()) {
             pos.xLoc = 0;
+            pos.yLoc = 0;
+            pos.page = 0;
+        } else {
+            cursor = db.rawQuery("select max(" + PAGE + ") from " + TABLE_APPLICATIONS_LIST, null);
+            if (cursor.moveToFirst()) {
+                int maxPage = cursor.getInt(0);
+                cursor = db.rawQuery("select max(" + YLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage), null);
+                cursor.moveToFirst();
+                int maxY = cursor.getInt(0);
+                cursor = db.rawQuery("select max(" + XLOC + ") from " + TABLE_APPLICATIONS_LIST + " where " + PAGE + " = " + Integer.toString(maxPage) + " and " + YLOC + " = " + Integer.toString(maxY), null);
+                cursor.moveToFirst();
+                int maxX = cursor.getInt(0);
+
+                Preferences prefs = new Preferences(activity);
+                int across = prefs.getAppsAcross();
+                int down = prefs.getAppsDown();
+                if (maxY >= down - 1 && maxX >= across - 1) {
+                    pos.page = (maxPage + 1);
+                    pos.xLoc = 0;
+                    pos.yLoc = 0;
+                    prefs.incrementListPages();
+                } else if (maxX >= across - 1) {
+                    pos.page = maxPage;
+                    pos.xLoc = 0;
+                    pos.yLoc = (maxY + 1);
+                } else {
+                    pos.page = maxPage;
+                    pos.xLoc = (maxX + 1);
+                    pos.yLoc = maxY;
+                }
+            }
         }
         db.close();
         return pos;
     }
 
+    //ToDo: remove page if no apps remain on page after deletion
     public void removeApplicationFromList(int appID) {
         SQLiteDatabase db = this.getWritableDatabase();
 

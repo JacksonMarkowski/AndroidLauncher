@@ -40,10 +40,20 @@ public class AppButtonContainer extends LinearLayout {
     }
 
     public void setDefaultParams(int width, int height) {
+        this.width = width;
+        this.height = height;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
         setOrientation(LinearLayout.VERTICAL);
         setLayoutParams(params);
 
+    }
+
+    public int getSetWidth() {
+        return width;
+    }
+
+    public int getSetHeight() {
+        return height;
     }
 
     public void setIcon(AppButtonIcon icon) {

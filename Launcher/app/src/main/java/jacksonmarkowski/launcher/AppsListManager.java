@@ -36,7 +36,6 @@ public class AppsListManager {
         int size = prefs.getListPageIndicatorSize();
         int margin = prefs.getListPageIndicatorMargin();
         int padding = prefs.getListPageIndicatorPadding();
-        Log.v("Size3", Integer.toString(size));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
         params.setMargins(margin, 0, margin, 0);
 
@@ -48,7 +47,7 @@ public class AppsListManager {
         layout.addView(pageIcons.get(0));
 
         //Adds page icon for the remaining pages that are not currently selected;
-        for (int i = 1; i < 4; i++) {
+        for (int i = 1; i < prefs.getListPages(); i++) {
             pageIcon = new ImageView(activity);
             pageIcon.setImageResource(R.drawable.list_page_notselected_icon);
             pageIcon.setLayoutParams(params);
@@ -72,7 +71,7 @@ public class AppsListManager {
         Preferences prefs = new Preferences(activity);
 
         grids = new ArrayList<AppsListGrid>();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < prefs.getListPages(); i++) {
             grids.add(new AppsListGrid(activity));
         }
 
