@@ -21,10 +21,12 @@ public class Preferences {
     private static final String listPageIndicatorMargin = "ListPageIndicatorMargin";
     private static final String listPageIndicatorPadding = "ListPageIndicatorPadding";
 
-    private static final String defaultAppWidth = "DefaultAppWidth";
-    private static final String defaultAppHeight = "DefaultAppHeight";
-    private static final String defaultIconSize = "DefaultIconSize";
-    private static final String defaultPaddingSize = "DefaultPaddingSize";
+    private static final String appWidth = "AppWidth";
+    private static final String appHeight = "AppHeight";
+    private static final String appIconSize = "AppIconSize";
+    private static final String appPaddingSize = "AppPaddingSize";
+
+    private static final String editCrossSize = "EditCrossSize";
 
     public Preferences(Activity activity) {
         this.activity = activity;
@@ -36,6 +38,7 @@ public class Preferences {
             editor.apply();
             generateDefaultListSizes();
             generateDefaultAppSize();
+            generateDefaultEditSizes();
         }
 
 
@@ -133,25 +136,25 @@ public class Preferences {
 
     public int getDefaultAppWidth() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int width = sharedPref.getInt(defaultAppWidth, 250);
+        int width = sharedPref.getInt(appWidth, 250);
         return width;
     }
 
     public int getDefaultAppHeight() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int height = sharedPref.getInt(defaultAppHeight, 250);
+        int height = sharedPref.getInt(appHeight, 250);
         return height;
     }
 
     public int getDefaultIconSize() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int size = sharedPref.getInt(defaultIconSize, 250);
+        int size = sharedPref.getInt(appIconSize, 250);
         return size;
     }
 
     public int getDefaultPaddingSize() {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        int padding = sharedPref.getInt(defaultPaddingSize, 0);
+        int padding = sharedPref.getInt(appPaddingSize, 0);
         return padding;
     }
 
@@ -177,10 +180,17 @@ public class Preferences {
 
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(defaultAppWidth, buttonWidth);
-        editor.putInt(defaultAppHeight, buttonHeight);
-        editor.putInt(defaultIconSize, iconSize);
-        editor.putInt(defaultPaddingSize, paddingSize);
+        editor.putInt(appWidth, buttonWidth);
+        editor.putInt(appHeight, buttonHeight);
+        editor.putInt(appIconSize, iconSize);
+        editor.putInt(appPaddingSize, paddingSize);
         editor.apply();
+    }
+
+    public void generateDefaultEditSizes() {
+        int crossSize = 34;
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(editCrossSize, crossSize);
     }
 }

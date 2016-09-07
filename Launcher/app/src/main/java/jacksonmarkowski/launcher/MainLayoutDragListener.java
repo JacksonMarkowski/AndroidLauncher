@@ -25,7 +25,9 @@ public class MainLayoutDragListener implements View.OnDragListener {
     public boolean onDrag(View v, DragEvent event) {
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
+
                 FrameLayout mainLayout = (FrameLayout) v;
+                mainLayout.addView(new MainEditView(activity));
 
                 params2.leftMargin = 5000;
                 params2.topMargin = 5000;
